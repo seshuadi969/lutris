@@ -4,18 +4,24 @@ FROM python:3.10-slim
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first (optional, if exists)
-COPY requirements.txt /app/
+# Install system dependencies (Lutris needs some)
+RUN apt-get update && apt-get install -y \
+    python3-gi \
+    gir1.2-gtk-3.0 \
+    gir1.2-glib-2.0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies if requirements.txt exists
-RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
-
-# Copy rest of the app
+# Copy project files
 COPY . /app
 
-# Expose port (if your app runs on Flask/Django etc.)
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install lutris in editable mode
+RUN pip install -e .
+
+# Expose port if needed (Lutris is usually GUI, but just in case)
 EXPOSE 5000
 
-# Run the app (make sure the filename is correct!)
-CMD ["python", "main.py"]
-
+# Run Lutris CLI
+CMD ["lutris", "--help"]
