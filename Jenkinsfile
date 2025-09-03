@@ -1,20 +1,23 @@
-# Use Python as base
-FROM python:3.10-slim
+pipeline {
+    agent any
 
-# Set working directory
-WORKDIR /app
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/seshuadi969/lutris.git'
+            }
+        }
 
-# Copy requirements first (optional, if exists)
-COPY requirements.txt /app/
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t lutris-app .'
+            }
+        }
 
-# Install dependencies if requirements.txt exists
-RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
-
-# Copy rest of the app
-COPY . /app
-
-# Expose port (if your app runs on Flask/Django etc.)
-EXPOSE 5000
-
-# Run the app (make sure the filename is correct!)
-CMD ["python", "main.py"]
+        stage('Run Container') {
+            steps {
+                sh 'docker run -d -p 5000:5000 --name lutris-container lutris-app || true'
+            }
+        }
+    }
+}
