@@ -16,11 +16,8 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                sh '''
-                docker run -d -p 5000:5000 --name lutris-container lutris-app
-                '''
+                sh 'docker run -d -p 5000:5000 --name lutris-container lutris-app'
             }
         }
     }
 }
-
