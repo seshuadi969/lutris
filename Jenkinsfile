@@ -9,22 +9,20 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-                script {
-                    sh 'docker build -t lutris-app .'
-                }
+            steps {
+                sh 'docker build -t lutris-app .'
             }
         }
 
         stage('Run Container') {
             steps {
-                script {
-                    // Stop old container if running
-                    sh 'docker stop lutris-container || true && docker rm lutris-container || true'
-                    
-                    // Run new container
-                    sh 'docker run -d -p 5000:5000 --name lutris-container lutris-app'
-                }
+                sh '''
+                docker stop lutris-container || true
+                docker rm lutris-container || true
+                docker run -d -p 5000:5000 --name lutris-container lutris-app
+                '''
             }
         }
     }
+}
 
