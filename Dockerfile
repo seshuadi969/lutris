@@ -14,5 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt || true
 EXPOSE 5000
 
 # Run the app (change filename to your main python script)
-CMD ["python", "app.py"]
+CMD ["python", "main.py"]
 
